@@ -1,6 +1,7 @@
 var Synth, AudioSynth, AudioSynthInstrument;
 !function(){
 	var _encapsulated = false;
+	var AudioSynthInstance = null;
 	var pack = function(c,arg){return [String.fromCharCode(arg&255,(arg>>8)&255),String.fromCharCode(arg&255,(arg>>8)&255,(arg>>16)&255,(arg>>24)&255)][c];};
 	var setPrivateVar = function(n,v,w,e){Object.defineProperty(this,n,{value:v,writable:!!w,enumerable:!!e});};
 	var setPublicVar = function(n,v,w){setPrivateVar.call(this,n,v,w,true);};
@@ -16,7 +17,10 @@ var Synth, AudioSynth, AudioSynthInstrument;
 	setPub('play', function(note, octave, duration) {
 		return this._parent.play(this._soundID, note, octave, duration);
 	});
-	AudioSynth = function AudioSynth(){if(window['Synth'] instanceof AudioSynth){return window['Synth'];}else{ this.__init__(); return this; }};
+	setPub('generate', function(note, octave, duration) {
+		return this._parent.generate(this._soundID, note, octave, duration);
+	});
+	AudioSynth = function AudioSynth(){if(AudioSynthInstance instanceof AudioSynth){return AudioSynthInstance;}else{ this.__init__(); return this; }};
 	setPriv = setPrivateVar.bind(AudioSynth.prototype);
 	setPub = setPublicVar.bind(AudioSynth.prototype);
 	setPriv('_debug',false,true);
@@ -200,7 +204,8 @@ var Synth, AudioSynth, AudioSynthInstrument;
 		}
 		return true;
 	});
-	Synth = new AudioSynth();
+	AudioSynthInstance = new AudioSynth();
+	Synth = AudioSynthInstance;
 }();
 
 Synth.loadModulationFunction(
