@@ -242,10 +242,10 @@ Synth.loadSoundProfile({
 {
 	name: 'organ',
 	attack: function() { return 0.3 },
-	dampen: function(i, sampleRate, frequency) { return 1+(frequency * 0.01); },
+	dampen: function(sampleRate, frequency) { return 1+(frequency * 0.01); },
 	wave: function(i, sampleRate, frequency) {
 		var base = this.modulate[0];
-		return mod[0](
+		return this.modulate[1](
 			i,
 			sampleRate,
 			frequency,
