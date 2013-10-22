@@ -1,5 +1,6 @@
 var Synth, AudioSynth, AudioSynthInstrument;
 !function(){
+	var _encapsulated = false;
 	var pack = function(c,arg){return [String.fromCharCode(arg&255,(arg>>8)&255),String.fromCharCode(arg&255,(arg>>8)&255,(arg>>16)&255,(arg>>24)&255)][c];};
 	var setPrivateVar = function(n,v,w,e){Object.defineProperty(this,n,{value:v,writable:!!w,enumerable:!!e});};
 	var setPublicVar = function(n,v,w){setPrivateVar.call(this,n,v,w,true);};
@@ -7,6 +8,7 @@ var Synth, AudioSynth, AudioSynthInstrument;
 	var setPriv = setPrivateVar.bind(AudioSynthInstrument.prototype);
 	var setPub = setPublicVar.bind(AudioSynthInstrument.prototype);
 	setPriv('__init__', function(a,b,c) {
+		if(!_encapsulated) { throw new Error('AudioSynthInstrument can only be instantiated from the createInstrument method of the AudioSynth object.'); }
 		setPrivateVar.call(this, '_parent', a);
 		setPublicVar.call(this, 'name', b);
 		setPrivateVar.call(this, '_soundID', c);
@@ -14,7 +16,7 @@ var Synth, AudioSynth, AudioSynthInstrument;
 	setPub('play', function(note, octave, duration) {
 		return this._parent.play(this._soundID, note, octave, duration);
 	});
-	AudioSynth = function AudioSynth(){this.__init__();}
+	AudioSynth = function AudioSynth(){if(window['Synth'] instanceof AudioSynth){return window['Synth'];}else{ this.__init__(); return this; }};
 	setPriv = setPrivateVar.bind(AudioSynth.prototype);
 	setPub = setPublicVar.bind(AudioSynth.prototype);
 	setPriv('_debug',false,true);
@@ -166,7 +168,10 @@ var Synth, AudioSynth, AudioSynthInstrument;
 			}
 		}
 		if(!found) { throw new Error('Invalid sound or sound ID: ' + sound); }
-		return new AudioSynthInstrument(this, sound, n);
+		_encapsulated = true;
+		var ins = new AudioSynthInstrument(this, sound, n);
+		_encapsulated = false;
+		return ins;
 	});
 	setPub('listSounds', function() {
 		var r = [];
