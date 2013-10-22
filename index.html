@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="audiosynth : JS Dynamic Audio Synth" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>audiosynth</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/keithwhor/audiosynth">View on GitHub</a>
+
+          <h1 id="project_title">audiosynth</h1>
+          <h2 id="project_tagline">JS Dynamic Audio Synth</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/keithwhor/audiosynth/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/keithwhor/audiosynth/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="audiosynth" class="anchor" href="#audiosynth"><span class="octicon octicon-link"></span></a>audiosynth</h1>
+
+<p>Dynamic waveform audio synthesizer, written in Javascript.</p>
+
+<p>Generate musical notes dynamically
+them in your browser using the HTML5 Audio Element.</p>
+
+<p>No static files required. (Besides the source, of course!)</p>
+
+<h2>
+<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<p>To see a demo of audiosynth in action, visit <a href="http://keithwhor.com/music/">http://keithwhor.com/music/</a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Assuming audiosynth.js is in your current directory, import package using:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"audiosynth.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>audiosynth implements a singleton class, <code>AudioSynth</code>. By default, the global (window) variable <code>Synth</code>
+is the instance of the class.</p>
+
+<p>Any attempt to instantiate new <code>AudioSynth</code> object will only create references to
+the original object.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Synth</span> <span class="k">instanceof</span> <span class="nx">AudioSynth</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="kd">var</span> <span class="nx">testInstance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioSynth</span><span class="p">;</span>
+<span class="nx">testInstance</span> <span class="k">instanceof</span> <span class="nx">AudioSynth</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="nx">testInstance</span> <span class="o">===</span> <span class="nx">Synth</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+<p>To use <code>AudioSynth</code> to generate .WAV files...</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Synth</span><span class="p">.</span><span class="nx">generate</span><span class="p">(</span><span class="nx">sound</span><span class="p">,</span> <span class="nx">note</span><span class="p">,</span> <span class="nx">octave</span><span class="p">,</span> <span class="nx">duration</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">    Will generate a base64-encoded dataURI wavefile (.WAV) containing your data.</span>
+
+<span class="cm">    sound</span>
+<span class="cm">        a numeric index or string referring to a sound profile (by id or name, respectively)</span>
+
+<span class="cm">    note</span>
+<span class="cm">        the note you wish to play (A,B,C,D,E,F,G). Supports sharps (i.e. C#) but not flats.</span>
+<span class="cm">        (Use the respective sharp!)</span>
+
+<span class="cm">    octave</span>
+<span class="cm">        the octave # of the note you wish to play</span>
+
+<span class="cm">    duration</span>
+<span class="cm">        the duration (in seconds) of the note</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<p>You can play notes instantly using...</p>
+
+<div class="highlight highlight-javascript"><pre><span class="cm">/*</span>
+<span class="cm">    Same arguments as Synth.generate,</span>
+<span class="cm">    only this creates an HTML Audio element, plays it, and unloads it upon completion.</span>
+<span class="cm">*/</span>
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">play</span><span class="p">(</span><span class="nx">sound</span><span class="p">,</span> <span class="nx">note</span><span class="p">,</span> <span class="nx">octave</span><span class="p">,</span> <span class="nx">duration</span><span class="p">);</span>
+</pre></div>
+
+<p>You may also create individual instruments (objects that reference .generate and .play, bound to specific
+sounds).</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">piano</span> <span class="o">=</span> <span class="nx">Synth</span><span class="p">.</span><span class="nx">createInstrument</span><span class="p">(</span><span class="s1">'piano'</span><span class="p">);</span>
+<span class="nx">piano</span><span class="p">.</span><span class="nx">play</span><span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// plays C4 for 2s using the 'piano' sound profile</span>
+</pre></div>
+
+<h2>
+<a name="sound-profiles" class="anchor" href="#sound-profiles"><span class="octicon octicon-link"></span></a>Sound Profiles</h2>
+
+<p><code>AudioSynth</code> comes with four default sound profiles.</p>
+
+<p><strong>piano</strong> (id 0)</p>
+
+<p><strong>organ</strong> (id 1)</p>
+
+<p><strong>acoustic</strong> (id 2)</p>
+
+<p><strong>edm</strong> (id 3)</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">acoustic</span> <span class="o">=</span> <span class="nx">Synth</span><span class="p">.</span><span class="nx">createInstrument</span><span class="p">(</span><span class="s1">'acoustic'</span><span class="p">);</span> <span class="c1">// play with your acoustic guitar!</span>
+</pre></div>
+
+<h2>
+<a name="changing-settings" class="anchor" href="#changing-settings"><span class="octicon octicon-link"></span></a>Changing Settings</h2>
+
+<p>Poor performance? The default sampling rate for AudioSynth is 44100Hz (CD quality). This can be taxing on your browser.</p>
+
+<p>To change the sampling rate, use <code>Synth.setSampleRate(n)</code>
+Please note that lower sampling rates will equate to poorer sound quality, especially for higher notes.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// Can only set values between 4000Hz and 44100Hz.</span>
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">setSampleRate</span><span class="p">(</span><span class="mi">20000</span><span class="p">);</span> <span class="c1">// sets sample rate to 20000Hz</span>
+
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">getSampleRate</span><span class="p">();</span> <span class="c1">// returns 20000</span>
+</pre></div>
+
+<p>Volume a bit much? Adust the volume of the sample similarly.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Synth</span><span class="p">.</span><span class="nx">setVolume</span><span class="p">(</span><span class="mf">1.00</span><span class="p">);</span> <span class="c1">// set volume to 100%</span>
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">setVolume</span><span class="p">(</span><span class="mf">0.40</span><span class="p">);</span> <span class="c1">// no, wait, 40%.</span>
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">setVolume</span><span class="p">(</span><span class="mf">0.1337</span><span class="p">);</span> <span class="c1">// even better.</span>
+
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">getVolume</span><span class="p">();</span> <span class="c1">// returns 0.1337</span>
+</pre></div>
+
+<h2>
+<a name="advanced-usage" class="anchor" href="#advanced-usage"><span class="octicon octicon-link"></span></a>Advanced Usage</h2>
+
+<p>Additional sound profiles can be loaded using <code>Synth.loadSoundProfile()</code></p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// Load a sound profile from an object...</span>
+<span class="nx">Synth</span><span class="p">.</span><span class="nx">loadSoundProfile</span><span class="p">({</span>
+    <span class="c1">// name it</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">'my_sound'</span><span class="p">,</span>
+    <span class="c1">// WIP: return the length of time, in seconds, the attack lasts</span>
+    <span class="nx">attack</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">frequency</span><span class="p">,</span> <span class="nx">volume</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+    <span class="c1">// WIP: return a number representing the rate of signal decay.</span>
+    <span class="c1">// larger = faster decay</span>
+    <span class="nx">dampen</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">frequency</span><span class="p">,</span> <span class="nx">volume</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+    <span class="c1">// wave function: calculate the amplitude of your sine wave based on i (index)</span>
+    <span class="nx">wave</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">frequency</span><span class="p">,</span> <span class="nx">volume</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/*</span>
+<span class="cm">        Here we have access to...</span>
+<span class="cm">        this.modulate : an array of loaded frequency</span>
+<span class="cm">        this.vars : any temporary variables you wish to keep track of</span>
+<span class="cm">        */</span>
+    <span class="p">}</span>
+
+<span class="p">});</span>
+</pre></div>
+
+<p>A rough guide to waveform generation can be found at <a href="http://keithwhor.com/music/">http://keithwhor.com/music/</a></p>
+
+<h2>
+<a name="debugging" class="anchor" href="#debugging"><span class="octicon octicon-link"></span></a>Debugging</h2>
+
+<p>If you're hanging on note generation (for default or custom sound profiles), use <code>Synth.debug()</code>
+to enable debugging.</p>
+
+<p>This will log note generation times in your console.</p>
+
+<h2>
+<a name="credits-and-acknowledgements" class="anchor" href="#credits-and-acknowledgements"><span class="octicon octicon-link"></span></a>Credits and Acknowledgements</h2>
+
+<p>Special thanks to Albert Pham (<a href="http://www.sk89q.com/">http://www.sk89q.com/</a>) for Dynamic .WAV file generation,
+the work off of which this is based (<a href="http://www.sk89q.com/playground/jswav/">http://www.sk89q.com/playground/jswav/</a>)
+and Hasen el Judy (<a href="http://dev.hasenj.org/post/4517734448">http://dev.hasenj.org/post/4517734448</a>) for information regarding Karplus-Strong
+String Synthesis.</p>
+
+<h2>
+<a name="further-reading" class="anchor" href="#further-reading"><span class="octicon octicon-link"></span></a>Further Reading</h2>
+
+<p><strong>.WAV Audio Files</strong></p>
+
+<p><a href="http://en.wikipedia.org/wiki/.WAV_file">http://en.wikipedia.org/wiki/.WAV_file</a></p>
+
+<p><strong>Sound Synthesis</strong></p>
+
+<p><a href="http://www.acoustics.salford.ac.uk/acoustics_info/sound_synthesis/">http://www.acoustics.salford.ac.uk/acoustics_info/sound_synthesis/</a></p>
+
+<p><strong>"acoustic" sound profile</strong> generated using <strong>Karplus-Strong String Synthesis</strong>:</p>
+
+<p><a href="http://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis">http://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis</a>
+<a href="http://music.columbia.edu/cmc/musicandcomputers/chapter4/04_09.php">http://music.columbia.edu/cmc/musicandcomputers/chapter4/04_09.php</a></p>
+
+<h2>
+<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h2>
+
+<p>Feel free to e-mail me at keithwhor at gmail dot com</p>
+
+<p>or follow me on Twitter, <a href="https://github.com/keithwhor" class="user-mention">@keithwhor</a></p>
+
+<p>If you like, feel free to share! :) Always appreciated.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">audiosynth maintained by <a href="https://github.com/keithwhor">keithwhor</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
