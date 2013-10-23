@@ -144,8 +144,8 @@ var Synth, AudioSynth, AudioSynthInstrument;
 			return dataURI;
 		}
 	});
-	setPub('play', function(note, octave, duration) {
-		var src = this.generate(note, octave, duration);
+	setPub('play', function(sound, note, octave, duration) {
+		var src = this.generate(sound, note, octave, duration);
 		var audio = new Audio(src);
 		audio.addEventListener('ended', function() { audio = null; });
 		audio.autoplay = true;
