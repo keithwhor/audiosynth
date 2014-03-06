@@ -1,8 +1,16 @@
 var Synth, AudioSynth, AudioSynthInstrument;
 !function(){
+
+	var URL = window.URL || window.webkitURL;
+	var Blob = window.Blob;
+
+	if(!URL || !Blob) {
+		throw new Error('This browser does not support AudioSynth');
+	}
+
 	var _encapsulated = false;
 	var AudioSynthInstance = null;
-	var pack = function(c,arg){return [String.fromCharCode(arg&255,(arg>>8)&255),String.fromCharCode(arg&255,(arg>>8)&255,(arg>>16)&255,(arg>>24)&255)][c];};
+	var pack = function(c,arg){ return [new Uint8Array([arg, arg >> 8]), new Uint8Array([arg, arg >> 8, arg >> 16, arg >> 24])][c]; };
 	var setPrivateVar = function(n,v,w,e){Object.defineProperty(this,n,{value:v,writable:!!w,enumerable:!!e});};
 	var setPublicVar = function(n,v,w){setPrivateVar.call(this,n,v,w,true);};
 	AudioSynthInstrument = function AudioSynthInstrument(){this.__init__.apply(this,arguments);};
@@ -89,33 +97,44 @@ var Synth, AudioSynth, AudioSynthInstrument;
 			return this._fileCache[sound][octave-1][note][time];
 		} else {
 			var frequency = this._notes[note] * Math.pow(2,octave-4);
-			var data = [];
 			var sampleRate = this._sampleRate;
 			var volume = this._volume;
 			var channels = this._channels;
 			var bitsPerSample = this._bitsPerSample;
 			var attack = thisSound.attack(sampleRate, frequency, volume);
 			var dampen = thisSound.dampen(sampleRate, frequency, volume);
-			var wave = thisSound.wave.bind({modulate: this._mod, vars: this._temp});
+			var waveFunc = thisSound.wave;
+			var waveBind = {modulate: this._mod, vars: this._temp};
 			var val = 0;
 			var curVol = 0;
 
-			for (var i = 0; i < (sampleRate * time); i++) {	
-				if(i<=sampleRate*attack) {
-					curVol = volume * (i/(sampleRate*attack));
-				} else {
-					curVol = volume * Math.pow((1-((i-(sampleRate*attack))/(sampleRate*(time-attack)))),dampen);
-				}
-		
-				val = curVol * Math.min(Math.max(wave(i, sampleRate, frequency, volume), -1), 1);
-				val = String.fromCharCode(val&255, (val>>>8)&255);
-				data.push(val);
-			}
-	
-			data = data.join('');
+			var data = new Uint8Array(new ArrayBuffer(Math.ceil(sampleRate * time * 2)));
+			var attackLen = (sampleRate * attack) | 0;
+			var decayLen = (sampleRate * time) | 0;
 
-			// Format sub-chunk
-			var chunk1 = [
+			for (var i = 0 | 0; i !== attackLen; i++) {
+		
+				val = volume * (i/(sampleRate*attack)) * waveFunc.call(waveBind, i, sampleRate, frequency, volume);
+
+				data[i << 1] = val;
+				data[(i << 1) + 1] = val >> 8;
+
+			}
+
+			for (; i !== decayLen; i++) {
+
+				val = volume * Math.pow((1-((i-(sampleRate*attack))/(sampleRate*(time-attack)))),dampen) * waveFunc.call(waveBind, i, sampleRate, frequency, volume);
+
+				data[i << 1] = val;
+				data[(i << 1) + 1] = val >> 8;
+
+			}
+
+			var out = [
+				'RIFF',
+				pack(1, 4 + (8 + 24/* chunk 1 length */) + (8 + 8/* chunk 2 length */)), // Length
+				'WAVE',
+				// chunk 1
 				'fmt ', // Sub-chunk identifier
 				pack(1, 16), // Chunk length
 				pack(0, 1), // Audio format (1 is linear quantization)
@@ -123,33 +142,32 @@ var Synth, AudioSynth, AudioSynthInstrument;
 				pack(1, sampleRate),
 				pack(1, sampleRate * channels * bitsPerSample / 8), // Byte rate
 				pack(0, channels * bitsPerSample / 8),
-				pack(0, bitsPerSample)
-			].join('');
-			// Data sub-chunk (contains the sound)
-			var chunk2 = [
+				pack(0, bitsPerSample),
+				// chunk 2
 				'data', // Sub-chunk identifier
 				pack(1, data.length * channels * bitsPerSample / 8), // Chunk length
 				data
-			].join('');
-			// Header
-			var header = [
-				'RIFF',
-				pack(1, 4 + (8 + chunk1.length) + (8 + chunk2.length)), // Length
-				'WAVE'
-			].join('');
-			var out = [header, chunk1, chunk2].join('');
-			var dataURI = 'data:audio/wav;base64,' + escape(window.btoa(out)); 
+			];
+			var blob = new Blob(out, {type: 'audio/wav'});
+			var dataURI = URL.createObjectURL(blob);
 			this._fileCache[sound][octave-1][note][time] = dataURI;
 			if(this._debug) { console.log((new Date).valueOf() - t, 'ms to generate'); }
 			return dataURI;
 		}
 	});
-	setPub('play', function(note, octave, duration) {
-		var src = this.generate(note, octave, duration);
+	setPub('play', function(sound, note, octave, duration) {
+		console.log('playing');
+		var src = this.generate(sound, note, octave, duration);
 		var audio = new Audio(src);
-		audio.addEventListener('ended', function() { audio = null; });
-		audio.autoplay = true;
-		audio.setAttribute('type', 'audio/wav');
+		var embed = document.createElement('embed');
+		embed.setAttribute('type', 'audio/x-wav');
+		embed.setAttribute('src', src);
+		document.body.appendChild(embed);
+		/* audio.autoplay = false;
+		audio.setAttribute('type', 'audio/x-wav');
+		console.log('play?');
+		audio.play(); */
+		
 		return true;
 	});
 	setPub('debug', function() { this._debug = true; });
