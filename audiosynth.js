@@ -156,18 +156,9 @@ var Synth, AudioSynth, AudioSynthInstrument;
 		}
 	});
 	setPub('play', function(sound, note, octave, duration) {
-		console.log('playing');
 		var src = this.generate(sound, note, octave, duration);
 		var audio = new Audio(src);
-		var embed = document.createElement('embed');
-		embed.setAttribute('type', 'audio/x-wav');
-		embed.setAttribute('src', src);
-		document.body.appendChild(embed);
-		/* audio.autoplay = false;
-		audio.setAttribute('type', 'audio/x-wav');
-		console.log('play?');
-		audio.play(); */
-		
+		audio.play();
 		return true;
 	});
 	setPub('debug', function() { this._debug = true; });

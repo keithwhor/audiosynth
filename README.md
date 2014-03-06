@@ -4,7 +4,7 @@ audiosynth
 Dynamic waveform audio synthesizer, written in Javascript.
 
 Generate musical notes dynamically
-them in your browser using the HTML5 Audio Element.
+and play them in your browser using the HTML5 Audio Element.
 
 No static files required. (Besides the source, of course!)
 
