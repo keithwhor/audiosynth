@@ -51,14 +51,14 @@ Synth.generate(sound, note, octave, duration);
 
 	sound
 		a numeric index or string referring to a sound profile (by id or name, respectively)
-	
+
 	note
 		the note you wish to play (A,B,C,D,E,F,G). Supports sharps (i.e. C#) but not flats.
 		(Use the respective sharp!)
-	
+
 	octave
 		the octave # of the note you wish to play
-		
+
 	duration
 		the duration (in seconds) of the note
 */
@@ -151,7 +151,7 @@ Synth.loadSoundProfile({
 		this.vars : any temporary variables you wish to keep track of
 		*/
 	}
-	
+
 });
 ```
 
@@ -204,3 +204,9 @@ Feel free to e-mail me at keithwhor at gmail dot com
 or follow me on Twitter, @keithwhor
 
 If you like, feel free to share! :) Always appreciated.
+
+View it
+-------
+A demo of audiosynth in action is at http://keithwhor.com/music/
+The same is replicated in keyboard.html, and requires audiosynth.js and audiosynth.view.js.
+Once you play a set of keys, you can playback the sequence using the "Playback" button, or clear the sequence with "Clear".
