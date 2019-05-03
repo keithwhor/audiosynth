@@ -159,7 +159,7 @@ var Synth, AudioSynth, AudioSynthInstrument;
 		var src = this.generate(sound, note, octave, duration);
 		var audio = new Audio(src);
 		audio.play();
-		return true;
+		return audio;
 	});
 	setPub('debug', function() { this._debug = true; });
 	setPub('createInstrument', function(sound) {
