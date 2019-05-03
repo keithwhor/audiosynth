@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Musical Keyboard - JS Dynamic Audio Synth</title>
+<style>
+
+	body { font-family: Helvetica; color: rgb(32,32,32); padding: 10px;
+		background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAM0lEQVQIW2P8DwQMMPDwIAODvD2YxwiXQBJESKAJQiQeHPgP0w43EsUoZFGgCQg70BwAANTgIZHym5jNAAAAAElFTkSuQmCC') repeat;
+		 }
+
+	b { font-weight: bold; }
+
+	.key { position: absolute; font-family: Helvetica; font-weight: 100; font-size: 12px;
+		border: 1px solid rgba(32,32,32,0.2);
+		border-radius: 0px 0px 5px 5px;
+		cursor:pointer;
+		box-shadow: 0px 5px 1px rgba(32,32,32,0.2);
+		-webkit-transition: margin 0.05s ease, background-color 0.05s ease, box-shadow 0.05s ease; }
+	.key:hover { background-color: rgb(255,192,32); }
+
+	.key .label { position: absolute; bottom: 5px; text-align: center; left: 0px; right: 0px; }
+
+	.black { background-color: rgb(32,32,32); color: #ffffff; z-index: 1; text-shadow: 0px -1px 1px rgba(255,255,255,0.5); }
+
+	.white { background-color: #ffffff; color: rgb(32,32,32); z-index: 0; text-shadow: 0px 1px 1px rgba(32,32,32,0.5); }
+
+	.title { text-shadow: 0px 1px 1px rgba(32,32,32,0.2); font-size: 40px; font-weight: bold; font-family: Helvetica; padding: 10px; text-align: center; }
+
+	.sub { color: rgb(96,96,96); font-size: 30px; padding: 10px; font-weight:100; margin:10px 0px; text-shadow: 0px 1px 1px rgba(32,32,32,0.2); text-align:center; }
+	.sub a, .sub a:link, .sub a:visited, .sub a:active { font-weight:bold; color: rgb(128,160,255); text-decoration: none; }
+	.sub a:hover { color: rgb(160,192,255); }
+
+	.source a { color: rgb(255,96,96); }
+	.source a:link, .source a:visited, .source a:active { color: rgb(255,96,96); }
+	.source a:hover { color: rgb(255,128,128); }
+
+	.small { font-size: 20px; }
+
+	.keyboard-options { margin: 30px auto; width: auto; text-align: center; font-size: 12px; font-weight: 200; padding:10px; }
+
+	.keyboard-holder { margin: 30px auto; height: 200px; position:relative; user-select:none; -webkit-user-select:none;-moz-user-select:none;-o-user-select:none; }
+
+	.about { position: relative; max-width: 700px; margin: 30px auto; }
+	.about .header { background-color:rgba(32,64,128,0.5); border-radius: 10px 10px 0px 0px; color:rgb(255,255,255); text-shadow:0px 1px 0px rgb(96,96,96);
+		position: relative; max-width: 600px; margin: 0 auto;
+		font-size: 30px; font-weight: bold; padding: 20px; text-align:center; }
+	.about .contents { font-size: 16px; line-height: 20px; background-color: rgb(255,255,255); font-weight: 200; padding: 20px; text-align: left; position: relative;
+		color: rgb(32,32,32); text-shadow: 0px 1px 0px rgb(224,224,224);
+		box-shadow: 0px 5px 10px rgba(32,32,32,0.5); -webkit-box-shadow: 0px 5px 10px rgba(32,32,32,0.5); border: 1px solid rgb(192,192,192); }
+	.about .footer { background-color:rgba(32,64,128,0.5); border-radius: 0px 0px 10px 10px; color:rgb(255,255,255);
+		position: relative; max-width: 600px; margin: 0 auto; font-weight: bold; padding: 20px; }
+
+	.about a, .about a:link, .about a:visited, .about a:active { font-weight:bold; color: rgb(224,96,32); text-decoration: none; }
+	.about a:hover { color: rgb(224,128,64); }
+
+	.code { border: 1px solid rgba(32,32,32,0.2); color: rgb(32,32,32); font-family: Courier New, Courier, monospace; font-size: 12px; white-space:pre; padding: 10px; margin: 10px; }
+
+	.image { border: 1px solid rgba(32,32,32,0.2); color: rgb(32,32,32); font-family: Courier New, Courier, monospace; font-size: 12px; white-space:pre; padding: 10px; margin: 10px; text-align: center; }
+
+	.notesPlayed{ font-size: 30px;}
+
+</style>
+
+<script src="audiosynth.js"></script>
+<script src="audiosynth.view.js"></script>
+
+
+<body>
+<div class="title">Musical Keyboard - JS Dynamic Audio Synth</div>
+<div class="sub">
+<div class="small"><div class="source"><a href="http://keithwhor.github.io/audiosynth">[ Source Code and Usage ]</a></div>
+</div>
+<div class="keyboard-options">
+Sound
+<select ID="sound">
+	<option value="0" selected>Keyboard</option>
+	<option value="1">Organ</option>
+    <option value="2">Acoustic Guitar</option>
+    <option value="3">EDM, bro!</option>
+</select>
+<div ID="keyboard" class="keyboard-holder"></div>
+<div class="keyboard-options">
+Range [C<span ID="OCTAVE_LOWER">3</span>-B<span ID="OCTAVE_UPPER">5</span>]
+<input type="button" ID="-_OCTAVE" value="-" />
+<input type="button" ID="+_OCTAVE" value="+" /><br />
+<i>(Use left/right arrows to adjust with keyboard)</i>
+</div>
+<div id="notesPlayed" class="notesPlayed"></div><div id="notesPlayedhidden" style="display:none"></div> <button id='playback' disabled>Playback</button> <button id='clear' disabled>Clear</button>
+<div class="about">
+	<div class="header">What is this?</div>
+    <div class="contents">
+    This is a an emulated keyboard (a synthesizer!) that spans three musical octaves (C3-B5).<br /><br />
+    Give it a shot, click any key with your mouse, or use the keys on your keyboard as indicated on the screen! Once you play a sequence, you can playback the same using the "Playback" button, or clear the sequence with "Clear".<Br>
+    (If you don't hear anything, try using <a href="http://google.com/chrome">Google Chrome</a> or update your browser to the newest version. Mobile devices aren't all quite supported yet.)
+    </div>
+    <div class="footer"></div>
+</div>
+<div class="about">
+	<div class="header">How does it work?</div>
+    <div class="contents">
+    This keyboard works by generating <a href="http://en.wikipedia.org/wiki/.WAV_file">Waveform Audio</a> file data dynamically, converting it into a <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">base64-encoded dataURI</a>, and subsequently playing it using the <a href="http://www.w3.org/wiki/HTML/Elements/audio">HTML5 audio element</a> from within your web browser.<br /><br />
+    Basically, we're using math to make sounds. Hooray. This is different than other HTML5 pianos in that it doesn't <a href="http://html5piano.com/">use pre-recorded audio files</a>, and that it's a <a href="http://mrcoles.com/piano/">little bit more refined</a>.
+    </div>
+    <div class="footer"></div>
+</div>
+
+<script type="text/javascript">
+
+var a = new AudioSynthView();
+a.draw();
+
+</script>
+
+</body>
+</html>
