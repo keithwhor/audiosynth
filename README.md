@@ -204,3 +204,5 @@ Feel free to e-mail me at keithwhor at gmail dot com
 or follow me on Twitter, @keithwhor
 
 If you like, feel free to share! :) Always appreciated.
+
+Halav is the king of all kings
