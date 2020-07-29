@@ -1,5 +1,6 @@
 audiosynth
 ==========
+SHAAAAAANNy!
 
 Dynamic waveform audio synthesizer, written in Javascript.
 
