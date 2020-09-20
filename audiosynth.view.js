@@ -192,6 +192,7 @@ function AudioSynthView() {
 	var keysPressed = [];
 	var visualKeyboard = null;
 	var selectSound = null;
+	var keysCount = 0;
 
 	var fnCreateKeyboard = function(keyboardElement) {
 		// Generate keyboard
@@ -258,6 +259,7 @@ function AudioSynthView() {
 
 	var fnPlayKeyboard = function(e) {
 
+		
 		var i = keysPressed.length;
 		while(i--) {
 			if(keysPressed[i]==e.keyCode) {
@@ -338,7 +340,8 @@ function AudioSynthView() {
             if (document.getElementById('notesPlayedhidden').innerHTML!=''){
 			    document.getElementById('notesPlayedhidden').innerHTML+=' ';
 			}
-			document.getElementById('notesPlayed').innerHTML+=note + (__octave + octaveModifier);
+			document.getElementById('notesPlayed').innerHTML+='<span id=note'+keysCount+ '>' +note + (__octave + octaveModifier) + '</span>' +'&nbsp';
+			keysCount++;
 			document.getElementById('notesPlayedhidden').innerHTML+=keyboard[e.keyCode];
 		} else {
 			return false;
@@ -391,7 +394,7 @@ function AudioSynthView() {
         var i = 1;
         var noteslist=document.getElementById('notesPlayed').innerHTML;
         var list=document.getElementById('notesPlayedhidden').innerHTML.split(' ');
-        var listvisible=document.getElementById('notesPlayed').innerHTML.split(' ');
+        var listvisible=document.getElementById('notesPlayed').innerHTML.split('&nbsp;');
 
         index=0;
         (function myLoop (i) {
