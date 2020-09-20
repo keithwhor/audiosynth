@@ -418,7 +418,7 @@ function AudioSynthView() {
 					return (idx === i) ? '<font color="red">'+match+'</font>' : match;
 				  });
 			      document.getElementById('notesPlayed').innerHTML=newNotes;
-			      if (index>0){
+			      if (index>0 && list[index-1] !== list[index]){
 			        document.getElementById('KEY_'+list[index-1]).style.backgroundColor='';
 			      }
 		          index++;
