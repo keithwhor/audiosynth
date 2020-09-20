@@ -395,7 +395,7 @@ function AudioSynthView() {
 
         index=0;
         (function myLoop (i) {
-           setTimeout(function () {
+           setTimeout(function () {debugger;
                 if (index<list.length){
                   var arrPlayNote = list[index].split(',');
                   var note = arrPlayNote[0];
