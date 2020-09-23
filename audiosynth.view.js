@@ -192,6 +192,7 @@ function AudioSynthView() {
 	var keysPressed = [];
 	var visualKeyboard = null;
 	var selectSound = null;
+	var keysCount = 0;
 
 	var fnCreateKeyboard = function(keyboardElement) {
 		// Generate keyboard
@@ -258,6 +259,7 @@ function AudioSynthView() {
 	var nodesCount = [];
 	var fnPlayKeyboard = function(e) {
 
+		
 		var i = keysPressed.length;
 		while(i--) {
 			if(keysPressed[i]==e.keyCode) {
@@ -338,13 +340,14 @@ function AudioSynthView() {
             if (document.getElementById('notesPlayedhidden').innerHTML!=''){
 			    document.getElementById('notesPlayedhidden').innerHTML+=' ';
 			}
-			document.getElementById('notesPlayed').innerHTML+=note + (__octave + octaveModifier);
+			document.getElementById('notesPlayed').innerHTML+='<span id=note'+keysCount+ '>' +note + (__octave + octaveModifier) + '</span>' +'&nbsp';
+			keysCount++;
 			document.getElementById('notesPlayedhidden').innerHTML+=keyboard[e.keyCode];
-			var item = (note + (__octave + octaveModifier));
+			/*var item = (note + (__octave + octaveModifier));
 			if(nodesCount[item])
 				nodesCount[item][0]++;
 			else
-				nodesCount[item] = [1,0];
+				nodesCount[item] = [1,0];*/
 		} else {
 			return false;
 		}
@@ -396,10 +399,9 @@ function AudioSynthView() {
         var i = 1;
         var noteslist=document.getElementById('notesPlayed').innerHTML;
         var list=document.getElementById('notesPlayedhidden').innerHTML.split(' ');
-		var listvisible=document.getElementById('notesPlayed').innerHTML.split(' ');
-		var notesChecked=document.getElementById('notesPlayed').innerHTML.split(' ');		
-		index=0;
-		noteCount=0;
+        var listvisible=document.getElementById('notesPlayed').innerHTML.split('&nbsp;');
+
+        index=0;
         (function myLoop (i) {
            setTimeout(function () {
                 if (index<list.length){
@@ -408,7 +410,7 @@ function AudioSynthView() {
 				  var octaveModifier = arrPlayNote[1]|0;
 			      fnPlayNote(note, __octave + octaveModifier,0);
 				  document.getElementById('KEY_'+list[index]).style.backgroundColor='red';
-				  var pat = new RegExp(listvisible[index],'g');
+				  /*var pat = new RegExp(listvisible[index],'g');
 				  var nth = 1, key = listvisible[index];		  
 				  if(nodesCount[key] && nodesCount[key][0] > 1){
 					nth = ++nodesCount[key][1];
@@ -416,8 +418,8 @@ function AudioSynthView() {
 				  var newNotes = noteslist.replace(pat, function (match, i, original) {
 					var idx = noteslist.split(match,nth).join(match).length;
 					return (idx === i) ? '<font color="red">'+match+'</font>' : match;
-				  });
-			      document.getElementById('notesPlayed').innerHTML=newNotes;
+				  });*/
+			      document.getElementById('notesPlayed').innerHTML=noteslist.replace(listvisible[index],'<font color="red">'+listvisible[index]+'</font>');			      
 			      if (index>0 && list[index-1] !== list[index]){
 			        document.getElementById('KEY_'+list[index-1]).style.backgroundColor='';
 			      }
@@ -431,9 +433,9 @@ function AudioSynthView() {
                     document.getElementById('clear').disabled=false;
 					document.getElementById('notesPlayed').innerHTML=noteslist;
 					
-					for(v in nodesCount){
+					/* for(v in nodesCount){
 						nodesCount[v][1] = 0
-					}
+					} */
 					  
 				  }
 				  
