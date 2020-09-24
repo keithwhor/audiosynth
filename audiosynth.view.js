@@ -256,7 +256,7 @@ function AudioSynthView() {
 	};
 
 	// Detect keypresses, play notes.
-
+	var nodesCount = [];
 	var fnPlayKeyboard = function(e) {
 
 		
@@ -343,6 +343,11 @@ function AudioSynthView() {
 			document.getElementById('notesPlayed').innerHTML+='<span id=note'+keysCount+ '>' +note + (__octave + octaveModifier) + '</span>' +'&nbsp';
 			keysCount++;
 			document.getElementById('notesPlayedhidden').innerHTML+=keyboard[e.keyCode];
+			/*var item = (note + (__octave + octaveModifier));
+			if(nodesCount[item])
+				nodesCount[item][0]++;
+			else
+				nodesCount[item] = [1,0];*/
 		} else {
 			return false;
 		}
@@ -402,11 +407,20 @@ function AudioSynthView() {
                 if (index<list.length){
                   var arrPlayNote = list[index].split(',');
                   var note = arrPlayNote[0];
-			      var octaveModifier = arrPlayNote[1]|0;
+				  var octaveModifier = arrPlayNote[1]|0;
 			      fnPlayNote(note, __octave + octaveModifier,0);
-			      document.getElementById('KEY_'+list[index]).style.backgroundColor='red';
-			      document.getElementById('notesPlayed').innerHTML=noteslist.replace(listvisible[index],'<font color="red">'+listvisible[index]+'</font>')
-			      if (index>0){
+				  document.getElementById('KEY_'+list[index]).style.backgroundColor='red';
+				  /*var pat = new RegExp(listvisible[index],'g');
+				  var nth = 1, key = listvisible[index];		  
+				  if(nodesCount[key] && nodesCount[key][0] > 1){
+					nth = ++nodesCount[key][1];
+				  }	
+				  var newNotes = noteslist.replace(pat, function (match, i, original) {
+					var idx = noteslist.split(match,nth).join(match).length;
+					return (idx === i) ? '<font color="red">'+match+'</font>' : match;
+				  });*/
+			      document.getElementById('notesPlayed').innerHTML=noteslist.replace(listvisible[index],'<font color="red">'+listvisible[index]+'</font>');			      
+			      if (index>0 && list[index-1] !== list[index]){
 			        document.getElementById('KEY_'+list[index-1]).style.backgroundColor='';
 			      }
 		          index++;
@@ -417,8 +431,14 @@ function AudioSynthView() {
                     document.getElementById('KEY_'+list[index-1]).style.backgroundColor='';
                     document.getElementById('playback').disabled=false;
                     document.getElementById('clear').disabled=false;
-                    document.getElementById('notesPlayed').innerHTML=noteslist;
-                  }
+					document.getElementById('notesPlayed').innerHTML=noteslist;
+					
+					/* for(v in nodesCount){
+						nodesCount[v][1] = 0
+					} */
+					  
+				  }
+				  
                }, 1000)
         })(list.length+1);
 
@@ -431,7 +451,8 @@ function AudioSynthView() {
         document.getElementById('notesPlayed').innerHTML='';
         document.getElementById('notesPlayedhidden').innerHTML='';
         document.getElementById('playback').disabled=true;
-        document.getElementById('clear').disabled=true;
+		document.getElementById('clear').disabled=true;
+		nodesCount = [];
     }
 
 	// Set up global event listeners
