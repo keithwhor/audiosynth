@@ -143,8 +143,16 @@ function AudioSynthView() {
 			188: 'A,1',
 
 			/* . */
-			190: 'B,1'
-
+			190: 'B,1',
+			
+			97 :'C,2',
+			98 :'D,2',
+			99 :'E,2',
+			100:'F,2',
+			101:'G,2',
+			102:'A,2',
+			103:'B,2'
+			
 		};
 
 	var reverseLookupText = {};
@@ -204,7 +212,8 @@ function AudioSynthView() {
 		var iWhite = 0;
 		var notes = __audioSynth._notes;
 
-		for(var i=-1;i<=1;i++) {
+		for(var i=-1;i<=2;i++) {
+			console.log(i);
 			for(var n in notes) {
 				if(n[2]!='b') {
 					var thisKey = document.createElement('div');
