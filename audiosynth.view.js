@@ -200,8 +200,7 @@ function AudioSynthView() {
 
 			case 190:
 				val = 46;
-				break;
-
+				break;					
 			default:
 				val = i;
 				break;
@@ -218,7 +217,57 @@ function AudioSynthView() {
 	var visualKeyboard = null;
 	var selectSound = null;
 	var keysCount = 0;
+	var getKeytext = function(_code){
+		var val;
+		switch(_code) {
 
+			case "97":
+				val = "NUM1";
+				break;
+
+			case "98":
+				val = "NUM2";
+				break;
+
+			case "99":
+				val = "NUM3";
+				break;
+
+			case "100":
+				val = "NUM4";
+				break;
+
+			case "101":
+				val = "NUM5";
+				break;
+			case "102": 
+				val = "NUM6";
+				break;
+			case "103": //NUMPAD2
+				val = "NUM7";
+				break;
+			case "104": //NUMPAD3
+				val = "NUM8";
+				break;	
+			case "105": //NUMPAD3
+				val = "NUM9";
+				break;		
+				case "110": //NUMPAD3
+				val = ".";
+				break;	
+				case "107": //NUMPAD3
+				val = "+";
+				break;	
+				case "109": //NUMPAD3
+				val = "-";
+				break;																				
+			default:
+				val = _code;
+				break;
+
+		}
+		return isNaN(val)  ? val : String.fromCharCode(val);
+	}
 	var fnCreateKeyboard = function(keyboardElement) {
 		// Generate keyboard
 		// This is our main keyboard element! It's populated dynamically based on what you've set above.
@@ -248,7 +297,8 @@ function AudioSynthView() {
 					}
 					var label = document.createElement('div');
 					label.className = 'label';
-					label.innerHTML = '<b>' + String.fromCharCode(reverseLookupText[n + ',' + i]) + '</b>' + '<br /><br />' + n.substr(0,1) +
+					console.log(getKeytext(reverseLookupText[n + ',' + i]));
+					label.innerHTML = '<b>' + getKeytext(reverseLookupText[n + ',' + i]) + '</b>' + '<br /><br />' + n.substr(0,1) +
 						'<span name="OCTAVE_LABEL" value="' + i + '">' + (__octave + parseInt(i)) + '</span>' + (n.substr(1,1)?n.substr(1,1):'');
 					thisKey.appendChild(label);
 					thisKey.setAttribute('ID', 'KEY_' + n + ',' + i);
